@@ -313,6 +313,27 @@ namespace Wwise {
         VisiSonics
     };
 
+    enum class FXPluginSpecialID : uint32_t {
+        FxSrcSineParams = 0x00640002,
+        FxSrcSilenceParams = 0x00650002,
+        ToneGenParams = 0x00660002,
+        ParameterEQFXParams = 0x00690003,
+        DelayFXParams = 0x006A0003,
+        PeakLimiterFXParams = 0x006E0003,
+        FDNReverbFXParams = 0x00730003,
+        RoomVerbFXParams = 0x00760003,
+        FlangerFXParams = 0x007D0003,
+        GuitarDistortionFXParams = 0x007E0003,
+        ConvolutionReverbFXParams = 0x007F0003,
+        MeterFXParams = 0x00810003,
+        HarmonizerFXParams = 0x008A0003,
+        GainFXParams = 0x008B0003,
+        StereoDelayFXParams = 0x00870003,
+        SynthOneParams = 0x00940002,
+        FxSrcAudioInputParams = 0x00C80002,
+        IZTrashDelayFXParams = 0x00041033,
+    };
+
     // Sound
 
     enum class SourceTypeOld : uint32_t {
@@ -518,7 +539,212 @@ namespace Wwise {
         PAN_UD
     };
 
+    enum class RTPCParameterID_2013 : uint8_t
+    {
+        Volume = 0x0,
+        LFE,
+        Pitch,
+        LPF,
+        BusVolume,
+        PlayMechanismSpecialTransitionsValue,
+        InitialDelay,
+
+        Priority = 0x8,
+        MaxNumInstances,
+        PositioningType,
+        Positioning_Divergence_Center_PCT,
+        Positioning_Cone_Attenuation_ON_OFF,
+        Positioning_Cone_Attenuation,
+        Positioning_Cone_LPF,
+
+        UserAuxSendVolume0 = 0xF,
+        UserAuxSendVolume1,
+        UserAuxSendVolume2,
+        UserAuxSendVolume3,
+        GameAuxSendVolume,
+
+        Position_PAN_X_2D = 0x14,
+        Position_PAN_Y_2D,
+        OutputBusVolume,
+        OutputBusLPF,
+
+        BypassFX0 = 0x18,
+        BypassFX1,
+        BypassFX2,
+        BypassFX3,
+        BypassAllFX,
+
+        FeedbackVolume = 0x1D,
+        FeedbackLowpass,
+        FeedbackPitch,
+
+        HDRBusThreshold = 0x20,
+        HDRBusReleaseTime,
+        HDRBusRatio,
+        HDRActiveRange,
+        MakeUpGain,
+
+        Position_PAN_X_3D = 0x25,
+        Position_PAN_Y_3D
+    };
+
+    enum class RTPCParameterID_2015 : uint8_t
+    {
+        Volume = 0x0,
+        LFE,
+        Pitch,
+        LPF,
+        HPF,
+        BusVolume,
+        InitialDelay,
+        PlayMechanismSpecialTransitionsValue,
+
+        Priority,
+        MaxNumInstances,
+        PositioningType,
+        Positioning_Divergence_Center_PCT,
+        Positioning_Cone_Attenuation_ON_OFF,
+        Positioning_Cone_Attenuation,
+        Positioning_Cone_LPF,
+        Positioning_Cone_HPF,
+
+        GameAuxSendVolume = 0x13,
+        Position_PAN_X_2D,
+        Position_PAN_Y_2D,
+
+        BypassFX0 = 0x18,
+        BypassFX1,
+        BypassFX2,
+        BypassFX3,
+        BypassAllFX,
+
+        FeedbackVolume = 0x1D,
+        FeedbackLowpass,
+        FeedbackPitch,
+
+        HDRBusThreshold = 0x20,
+        HDRBusReleaseTime,
+        HDRBusRatio,
+        HDRActiveRange,
+        MakeUpGain,
+
+        Position_PAN_X_3D = 0x25,
+        Position_PAN_Y_3D,
+
+        MidiTransposition = 0x27,
+        MidiVelocityOffset,
+        PlaybackSpeed,
+
+        ModulatorLfoDepth = 0x2A,
+        ModulatorLfoAttack,
+        ModulatorLfoFrequency,
+        ModulatorLfoWaveform,
+        ModulatorLfoSmoothing,
+        ModulatorLfoPWM,
+        ModulatorLfoInitialPhase,
+        ModulatorLfoRetrigger,
+        ModulatorEnvelopeAttackTime,
+        ModulatorEnvelopeAttackCurve,
+        ModulatorEnvelopeDecayTime,
+        ModulatorEnvelopeSustainLevel,
+        ModulatorEnvelopeSustainTime,
+        ModulatorEnvelopeReleaseTime,
+
+        UserAuxSendVolume0 = 0x38,
+        UserAuxSendVolume1,
+        UserAuxSendVolume2,
+        UserAuxSendVolume3,
+
+        OutputBusVolume = 0x3C,
+        OutputBusHPF,
+        OutputBusLPF,
+
+        MuteRatio = 0x3F
+    };
+
+    enum class RTPCParameterID_2022 : uint8_t
+    {
+        Volume = 0x0,
+        LFE,
+        Pitch,
+        LPF,
+        HPF,
+        BusVolume,
+        InitialDelay,
+        MakeUpGain,
+
+        Deprecated_FeedbackVolume,
+        Deprecated_FeedbackLowpass,
+        Deprecated_FeedbackPitch,
+
+        MidiTransposition,
+        MidiVelocityOffset,
+        PlaybackSpeed,
+        MuteRatio,
+        PlayMechanismSpecialTransitionsValue,
+        MaxNumInstances,
+
+        Priority = 0x11,
+        Position_PAN_X_2D,
+        Position_PAN_Y_2D,
+        Position_PAN_X_3D,
+        Position_PAN_Y_3D,
+        Position_PAN_Z_3D,
+        PositioningTypeBlend,
+        Positioning_Divergence_Center_PCT,
+        Positioning_Cone_Attenuation_ON_OFF,
+        Positioning_Cone_Attenuation,
+        Positioning_Cone_LPF,
+        Positioning_Cone_HPF,
+
+        BypassFX0,
+        BypassFX1,
+        BypassFX2,
+        BypassFX3,
+        BypassAllFX,
+
+        HDRBusThreshold,
+        HDRBusReleaseTime,
+        HDRBusRatio,
+        HDRActiveRange,
+
+        GameAuxSendVolume,
+        UserAuxSendVolume0,
+        UserAuxSendVolume1,
+        UserAuxSendVolume2,
+        UserAuxSendVolume3,
+
+        OutputBusVolume,
+        OutputBusHPF,
+        OutputBusLPF,
+
+        Positioning_EnableAttenuation,
+        ReflectionsVolume,
+
+        UserAuxSendLPF0,
+        UserAuxSendLPF1,
+        UserAuxSendLPF2,
+        UserAuxSendLPF3,
+
+        UserAuxSendHPF0,
+        UserAuxSendHPF1,
+        UserAuxSendHPF2,
+        UserAuxSendHPF3,
+
+        GameAuxSendLPF,
+        GameAuxSendHPF,
+
+        Position_PAN_Z_2D,
+        BypassAllMetadata,
+
+        Unknown_Custom_3D = 0x3D,
+        Unknown_Custom_3E,
+        Unknown_Custom_3F
+    };
+
     // Type converters
+    HIRCItemTypeNew ConvertType(HIRCItemTypeOld t);
+
     RTPCType2022 ConvertType(RTPCType2015 t);
     RTPCAccum2022 ConvertType(RTPCAccum2015 t);
     SourceTypeNew ConvertType(SourceTypeOld t);
@@ -526,4 +752,8 @@ namespace Wwise {
     AkPropID_2015 ConvertType(AkPropID_2013 t);
     AkPropID_2022 ConvertType_2013_to_2022(AkPropID_2013 t);
     AkPropID_2022 ConvertType(AkPropID_2015 t);
+
+    RTPCParameterID_2015 ConvertType(RTPCParameterID_2013 t);
+    RTPCParameterID_2022 ConvertType_2013_to_2022(RTPCParameterID_2013 t);
+    RTPCParameterID_2022 ConvertType(RTPCParameterID_2015 t);
 }

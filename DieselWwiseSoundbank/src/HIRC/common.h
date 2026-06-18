@@ -81,7 +81,8 @@ namespace Wwise {
 	// Sound
 
 	struct Plugin {
-		uint32_t data;
+		uint32_t id;
+
 		PluginType type;
 		PluginCompany company;
 
@@ -421,13 +422,11 @@ namespace Wwise {
 	};
 
 	struct StatePropertyNew {
-		uint8_t property_id; //AkRTPC_ParameterID
-		uint8_t accum_type; //AkRtpcAccum
-
-		// 2022
+		uint8_t property_id;
+		uint8_t accum_type;
 		uint8_t in_Db;
 
-		void Convert(Writer& writer);
+		// doesnt need a converter since its only present in 2022
 		StatePropertyNew(Reader& reader);
 	};
 
@@ -446,8 +445,8 @@ namespace Wwise {
 
 		uint8_t num_state_groups;
 		std::vector<StateGroup> state_groups;
-
-		void Convert(Writer& writer);
+		
+		// doesnt need a converter since its only present in 2022
 		ParameterNodeStateChunkNew() = default;
 		ParameterNodeStateChunkNew(Reader& reader);
 	};

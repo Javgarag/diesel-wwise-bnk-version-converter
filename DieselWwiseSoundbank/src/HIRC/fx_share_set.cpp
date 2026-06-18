@@ -10,7 +10,7 @@ namespace Wwise {
 
 	void PluginParameters::Convert(Writer& writer) {
 		writer << size;
-		writer.Write(*data.data(), data.size());
+		writer.Write(*data.data(), size);
 	}
 
 	MediaMap::MediaMap(Reader& reader) {
@@ -82,6 +82,7 @@ namespace Wwise {
 
 	void HIRCFxShareSet::Convert(Writer& writer) {
 		item_base.Convert(writer);
+
 		fx_id.Convert(writer);
 		parameters.Convert(writer);
 		
@@ -98,7 +99,7 @@ namespace Wwise {
 			writer << (uint8_t)0; // num state props
 			writer << (uint8_t)0; // num state groups
 
-			writer << (uint16_t)0;
+			writer << (uint16_t)0; // num_values
 		}
 
 		item_base.UpdateSize(writer);

@@ -163,6 +163,16 @@ namespace Wwise {
 		writer << switch_state_id;
 	}
 
+	HIRCActionPauseResume::HIRCActionPauseResume(Reader& reader) {
+		reader.Read(&flags);
+		except_params = ActionExceptParams(reader);
+	}
+
+	void HIRCActionPauseResume::Convert(Writer& writer) {
+		writer << flags;
+		except_params.Convert(writer);
+	}
+
 	HIRCActionBase::HIRCActionBase(Reader& reader)
 		: item_base(reader)
 	{
@@ -207,6 +217,12 @@ namespace Wwise {
 		switch (action_type_simple) {
 		case 0x0100:
 			action = HIRCActionStop(reader);
+			break;
+		case 0x0200: // Pause
+			action = HIRCActionPauseResume(reader);
+			break;
+		case 0x0300:
+			action = HIRCActionPauseResume(reader);
 			break;
 		case 0x0400:
 			action = HIRCActionPlay(reader);

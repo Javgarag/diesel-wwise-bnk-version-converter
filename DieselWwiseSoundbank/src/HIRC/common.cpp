@@ -10,7 +10,7 @@ namespace Wwise {
 	}
 
 	void HIRCItemGeneric::Convert(Writer& writer) {
-		writer << type;
+		writer << ConvertType((HIRCItemTypeOld)type);
 		size_position = writer.Tell();
 		writer << (uint32_t)0; // temp size, should get updated later
 		writer << item_id;
@@ -92,12 +92,18 @@ namespace Wwise {
 			if (VERSION == BankVersion::V2013) {
 				writer << (uint8_t)0; // RTPCType; GameParameter. None of the Diesel games use MIDI and Modulators were introduced in 2014.
 				writer << (uint8_t)0; // RTPCAccum; try with additive for now for conversions from 2013.
-				writer << (uint8_t)std::get<uint32_t>(param_id);
+
+				if (CONVERT_VERSION == BankVersion::V2015) {
+					writer << ConvertType((RTPCParameterID_2013)std::get<uint32_t>(param_id));
+				}
+				else { // 2022
+					writer << ConvertType_2013_to_2022((RTPCParameterID_2013)std::get<uint32_t>(param_id));
+				}
 			}
-			else {
+			else { // 2015 -> 2022
 				writer << ConvertType(std::get<RTPCType2015>(rtpc_type));
 				writer << ConvertType(std::get<RTPCAccum2015>(rtpc_accum));
-				writer << std::get<uint8_t>(param_id);
+				writer << ConvertType((RTPCParameterID_2015)std::get<uint8_t>(param_id));
 			}
 		}
 
@@ -125,14 +131,14 @@ namespace Wwise {
 	// Sound
 
 	Plugin::Plugin(Reader& reader) {
-		reader.Read(&data);
+		reader.Read(&id);
 
-		type = (PluginType)(data & 0x0000000F);
-		company = (PluginCompany)((data >> 1) & 0x00000FFF);
+		type = (PluginType)(id & 0x0000000F);
+		company = (PluginCompany)((id >> 1) & 0x00000FFF);
 	}
 
 	void Plugin::Convert(Writer& writer) {
-		writer << data;
+		writer << id;
 	}
 
 	SourceData::SourceData(Reader& reader)
@@ -849,22 +855,11 @@ namespace Wwise {
 		}, num_states);
 	}
 
+	// 2022
 	StatePropertyNew::StatePropertyNew(Reader& reader) {
 		reader.Read(&property_id);
 		reader.Read(&accum_type);
-
-		if (VERSION == BankVersion::V2022) {
-			reader.Read(&in_Db);
-		}
-	}
-
-	void StatePropertyNew::Convert(Writer& writer) {
-		writer << property_id;
-		writer << accum_type;
-
-		if (CONVERT_VERSION == BankVersion::V2022) {
-			writer << (uint8_t)1; // guessed default
-		}
+		reader.Read(&in_Db);
 	}
 
 	ParameterNodeStateChunkOld::ParameterNodeStateChunkOld(Reader& reader) {
@@ -882,6 +877,7 @@ namespace Wwise {
 		}
 	}
 
+	// 2022
 	ParameterNodeStateChunkNew::ParameterNodeStateChunkNew(Reader& reader) {
 		reader.Read(&num_state_props);
 		for (uint32_t i = 0; i < num_state_props; i++) {
@@ -891,18 +887,6 @@ namespace Wwise {
 		reader.Read(&num_state_groups);
 		for (uint32_t i = 0; i < num_state_groups; i++) {
 			state_groups.push_back(StateGroup(reader));
-		}
-	}
-
-	void ParameterNodeStateChunkNew::Convert(Writer& writer) {
-		writer << num_state_props;
-		for (uint32_t i = 0; i < num_state_props; i++) {
-			state_props[i].Convert(writer);
-		}
-
-		writer << num_state_groups;
-		for (uint32_t i = 0; i < num_state_groups; i++) {
-			state_groups[i].Convert(writer);
 		}
 	}
 

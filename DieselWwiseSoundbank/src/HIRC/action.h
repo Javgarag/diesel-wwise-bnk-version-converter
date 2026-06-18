@@ -120,13 +120,22 @@ namespace Wwise {
 		HIRCActionSetSwitch(Reader& reader);
 	};
 
+	struct HIRCActionPauseResume {
+		uint8_t flags;
+		ActionExceptParams except_params;
+
+		void Convert(Writer& writer);
+		HIRCActionPauseResume() = default;
+		HIRCActionPauseResume(Reader& reader);
+	};
+
 	struct HIRCActionBase {
 		HIRCItemGeneric item_base;
 		ActionType action_type;
 
 		ActionInitialValues initial_values;
 		ActionFadeCurve fade_curve;
-		std::variant<HIRCActionPlay, HIRCActionStop, HIRCActionSetGameParameter, HIRCActionSetProperty, HIRCActionBypassFX, HIRCActionSetSwitch> action;
+		std::variant<HIRCActionPlay, HIRCActionStop, HIRCActionSetGameParameter, HIRCActionSetProperty, HIRCActionBypassFX, HIRCActionSetSwitch, HIRCActionPauseResume> action;
 
 		void Convert(Writer& writer);
 		HIRCActionBase(Reader& reader);

@@ -2,10 +2,53 @@
 #include "common.h"
 
 namespace Wwise {
+	struct ConvolutionReverbFXParams {
+		float pre_delay;
+		float front_rear_delay;
+		float stereo_width;
+		float input_center_level;
+		float input_lfe_level;
+		
+		// 2022
+		std::optional<float> input_stereo_width;
+
+		float front_level;
+		float rear_level;
+		float center_level;
+		float lfe_level;
+		float dry_level;
+		float wet_level;
+		uint32_t algo_type;
+
+		// 2022
+		uint8_t unknown;
+	};
+
+	struct MeterFXParams {
+		float rtpc_attack;
+		float rtpc_release;
+		float rtpc_min;
+		float rtpc_max;
+		float rtpc_hold;
+
+		// 2022
+		std::optional<uint8_t> rtpc_infinite_hold;
+		// + 2013
+		std::optional<uint8_t> non_rtpc_mode; // Peak or RMS (default; value "1")
+		std::optional<uint8_t> non_rtpc_scope; // default 0, Global
+
+		uint8_t non_rtpc_apply_downstream_volume;
+		uint32_t non_rtpc_game_param_id;
+	};
+
 	struct PluginParameters {
 		uint32_t size;
+
+		// Pad the rest for plugins whose parameters dont change between versions
 		std::vector<unsigned char> data;
-		// pad the rest
+
+		// Some specific plugin types do change (not implemented)
+		std::variant<ConvolutionReverbFXParams, MeterFXParams> parameters;
 
 		void Convert(Writer& writer);
 		PluginParameters() = default;
@@ -22,7 +65,7 @@ namespace Wwise {
 	};
 
 	struct RTPCInit2015 {
-		uint8_t param_id;
+		uint8_t param_id; // AkRTPC_ParameterID
 		float init_value;
 
 		void Convert(Writer& writer);

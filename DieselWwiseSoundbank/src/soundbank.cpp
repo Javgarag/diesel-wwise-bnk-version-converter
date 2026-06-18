@@ -57,7 +57,7 @@ namespace Wwise {
 	};
 
 	bool Soundbank::Convert(BankVersion new_version, const std::filesystem::path& file_path) {
-		// Todo: convert AkRTPC_ParameterID values, FxCustom/FxShareSet values (see car_falcogini)
+		// Todo: flesh out positioning params (see parity between item 145154648 old, new official and converted)
 
 		CONVERT_VERSION = new_version;
 

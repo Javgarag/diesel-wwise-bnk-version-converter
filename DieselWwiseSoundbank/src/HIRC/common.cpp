@@ -190,7 +190,13 @@ namespace Wwise {
 			writer << ConvertType(std::get<SourceTypeOld>(source_type));
 		}
 		else {
-			writer << std::get<SourceTypeNew>(source_type);
+			if (std::get<SourceTypeNew>(source_type) == SourceTypeNew::PrefetchStreaming) {
+				// Force-convert zero latency sounds to normal streaming (old IMA ADPCM prefetch segments don't play correctly on modern Wwise)
+				writer << SourceTypeNew::Streaming;
+			}
+			else {
+				writer << std::get<SourceTypeNew>(source_type);
+			}
 		}
 
 		writer << source_id;
@@ -583,10 +589,14 @@ namespace Wwise {
 		else { // 2022
 			// has_listener_relative_routing
 			if (VERSION == BankVersion::V2013) {
-				bits_positioning_new |= (is_3d_positioning_available.value() << 1);
+				if (is_3d_positioning_available.value() == 1 || is_2d_positioning_available.value() == 1) {
+					bits_positioning_new |= (1 << 1);
+				}
 			}
 			else {
-				bits_positioning_new |= (std::get<BitPositioning2015>(bits_positioning).is_3d_positioning_available << 1);
+				if (std::get<BitPositioning2015>(bits_positioning).is_3d_positioning_available == 1 || std::get<BitPositioning2015>(bits_positioning).is_2d_positioning_available == 1) {
+					bits_positioning_new |= (1 << 1);
+				}	
 			}
 			bits_positioning_new |= ((int)SpeakerPanningType::DirectSpeakerAssignment << 2); // panner_type
 
@@ -621,36 +631,45 @@ namespace Wwise {
 
 		uint8_t bits_3d_new = 0;
 
-		// if VERSION == 2013, spatialization_mode == None (0) no matter convert version.
-		if (VERSION == BankVersion::V2015 && CONVERT_VERSION == BankVersion::V2022) {
-			bits_3d_new |= ((int)std::get<Bits3D2015>(bits_3d.value()).spatialization_mode << 0);
-		}
+		// EXCLUSIVELY 3D parameters
+		if ((VERSION == BankVersion::V2013 && is_3d_positioning_available == 1) 
+			|| (VERSION == BankVersion::V2015 && std::get<BitPositioning2015>(bits_positioning).is_3d_positioning_available == 1)) {
+			// if VERSION == 2013, spatialization_mode == None (0) no matter convert version.
+			if (VERSION == BankVersion::V2015 && CONVERT_VERSION == BankVersion::V2022) {
+				bits_3d_new |= ((int)std::get<Bits3D2015>(bits_3d.value()).spatialization_mode << 0);
+			}
 
-		// hold emitter pos and orientation
-		if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2015 && type.value() == PositioningType::Positioning2D) { // has emitter automation
-			bits_3d_new |= (is_dynamic.value() << 3);
-		}
-		else if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2022 && type.value() == PositioningType::Positioning2D) { // has emitter automation
-			bits_3d_new |= (is_dynamic.value() << 4);
-		}
-		else if (VERSION != BankVersion::V2013) { // 2015 to 2022
-			bits_3d_new |= ((int)std::get<Bits3D2015>(bits_3d.value()).hold_emitter_pos_and_orient << 4);
-		}
+			// hold emitter pos and orientation
+			if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2015 && type.value() == PositioningType::Positioning2D) { // has emitter automation
+				bits_3d_new |= (is_dynamic.value() << 3);
+			}
+			else if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2022 && type.value() == PositioningType::Positioning2D) { // has emitter automation
+				bits_3d_new |= (is_dynamic.value() << 4);
+			}
+			else if (VERSION != BankVersion::V2013) { // 2015 to 2022
+				bits_3d_new |= ((int)std::get<Bits3D2015>(bits_3d.value()).hold_emitter_pos_and_orient << 4);
+			}
 
-		// hold listener orient
-		if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2015 && type.value() != PositioningType::Positioning2D) { // has listener automation
-			bits_3d_new |= (follow_orientation.value() << 4);
+			// hold listener orient
+			if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2015 && type.value() != PositioningType::Positioning2D) { // has listener automation
+				bits_3d_new |= (follow_orientation.value() << 4);
+			}
+			else if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2022 && type.value() != PositioningType::Positioning2D) { // has listener automation
+				bits_3d_new |= (follow_orientation.value() << 5);
+			}
+			else if (VERSION != BankVersion::V2013) { // 2015 to 2022
+				bits_3d_new |= ((int)std::get<Bits3D2015>(bits_3d.value()).hold_listener_orient << 5);
+			}
 		}
-		else if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2022 && type.value() != PositioningType::Positioning2D) { // has listener automation
-			bits_3d_new |= (follow_orientation.value() << 5);
-		}
-		else if (VERSION != BankVersion::V2013) { // 2015 to 2022
-			bits_3d_new |= ((int)std::get<Bits3D2015>(bits_3d.value()).hold_listener_orient << 5);
-		}
+		// End exclusively 3D parameters
 
-		if (CONVERT_VERSION == BankVersion::V2022 && attenuation_id.has_value()) {
-			// attenuation ID got moved to a property in the PropertyBundle in 2015+ and now a bool needs setting in Bits3D (see BaseParams::Convert())
-			bits_3d_new |= (1 << 3); // enable_attenuation 
+		// enable_attenuation 
+		// Both 3D and old 2D stuff get assigned an attenuation in 2022 (in the latter case it'll be an empty one since older versions had no toggle for 2D attenuation)
+		// if set, the old inline attenuation ID gets moved to a property in the PropertyBundle in 2022 (see BaseParams::Convert())
+		if (CONVERT_VERSION == BankVersion::V2022 && (attenuation_id.has_value() 
+			|| (VERSION == BankVersion::V2015 && std::get<BitPositioning2015>(bits_positioning).is_2d_positioning_available == 1)
+			|| (VERSION == BankVersion::V2013 && is_2d_positioning_available.value() == 1))) {
+			bits_3d_new |= (1 << 3);
 		}
 
 		// as for enable_diffraction in 2022, default value is false so we do nothing (introduced 2017+)
@@ -735,7 +754,7 @@ namespace Wwise {
 			writer << bit_flags;
 
 			if (has_aux == 1) {
-				writer.Write(*aux_id.data(), aux_id.size());
+				writer.Write(*aux_id.data(), sizeof(uint32_t) * 4);
 			}
 		}
 		else {

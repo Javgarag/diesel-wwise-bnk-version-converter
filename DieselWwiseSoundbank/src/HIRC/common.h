@@ -225,7 +225,7 @@ namespace Wwise {
 
 	struct BitPositioning2015 {
 		bool positioning_info_override_parent : 1;
-		bool unknown2d_next_flag : 1;
+		bool is_2d_positioning_available : 1;
 		bool unknown2d : 1;
 		bool is_3d_positioning_available : 1; // has_3d
 		unsigned char : 3;

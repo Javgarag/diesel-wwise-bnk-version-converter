@@ -57,7 +57,7 @@ namespace Wwise {
 	};
 
 	bool Soundbank::Convert(BankVersion new_version, const std::filesystem::path& file_path) {
-		// Todo: flesh out positioning params (see parity between item 145154648 old, new official and converted)
+		// Todo: bus conversion
 
 		CONVERT_VERSION = new_version;
 

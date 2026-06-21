@@ -24,6 +24,12 @@ namespace Wwise {
 			throw std::runtime_error("Unsupported Soundbank version! Supported versions: 2013 (88), 2015 (113), 2022 (145)");
 		}
 
+		// STMG (init.bnk)
+		if (size_t stmg_address = reader.SearchAddress(Header::STMG)) {
+			reader.Seek(stmg_address);
+			global_settings = STMG(reader);
+		}
+
 		// DIDX
 		if (size_t didx_address = reader.SearchAddress(Header::DIDX)) {
 			reader.Seek(didx_address);
@@ -68,6 +74,10 @@ namespace Wwise {
 		writer = Writer(file_path);
 
 		bank_header.Convert(writer);
+
+		if (global_settings) {
+			global_settings.value().Convert(writer);
+		}
 
 		if (data_index) {
 			data_index.value().Convert(writer);

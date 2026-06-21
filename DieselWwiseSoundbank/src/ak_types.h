@@ -6,6 +6,7 @@ namespace Wwise {
         BKHD = 0x44484B42,
         DIDX = 0x58444944,
         DATA = 0x41544144,
+        STMG = 0x474D5453,
         HIRC = 0x43524948,
         STID = 0x44495453
     };

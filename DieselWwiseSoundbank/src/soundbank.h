@@ -5,6 +5,7 @@
 #include "bkhd.h"
 #include "didx.h"
 #include "data.h"
+#include "stmg.h"
 #include "hirc.h"
 #include "stid.h"
 
@@ -23,6 +24,7 @@ namespace Wwise {
 		BKHD bank_header;
 		std::optional<DIDX> data_index;
 		std::optional<DATA> sound_data;
+		std::optional<STMG> global_settings;
 		HIRC objects;
 		std::optional<STID> string_mapping;
 

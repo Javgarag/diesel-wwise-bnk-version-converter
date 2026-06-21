@@ -178,6 +178,7 @@
     <ClInclude Include="src\reader.h" />
     <ClInclude Include="src\soundbank.h" />
     <ClInclude Include="src\stid.h" />
+    <ClInclude Include="src\stmg.h" />
     <ClInclude Include="src\writer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +206,7 @@
     <ClCompile Include="src\reader.cpp" />
     <ClCompile Include="src\soundbank.cpp" />
     <ClCompile Include="src\stid.cpp" />
+    <ClCompile Include="src\stmg.cpp" />
     <ClCompile Include="src\writer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

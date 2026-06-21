@@ -111,6 +111,9 @@
     <ClInclude Include="src\HIRC\audio_device.h">
       <Filter>Archivos de encabezado\src\HIRC</Filter>
     </ClInclude>
+    <ClInclude Include="src\stmg.h">
+      <Filter>Archivos de encabezado\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\HIRC\action.cpp">
@@ -187,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="src\HIRC\audio_device.cpp">
       <Filter>Archivos de origen\src\HIRC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stmg.cpp">
+      <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

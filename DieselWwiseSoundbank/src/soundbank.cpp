@@ -11,6 +11,7 @@ namespace Wwise {
 		// BKHD		
 		bank_header = BKHD(reader);
 		if (bank_header.section_info.header != Header::BKHD) {
+			std::cout << "ERROR: File is not a Wwise Soundbank (.bnk)!" << std::endl;
 			throw std::runtime_error("File is not a Wwise Soundbank (.bnk)!");
 		}
 		switch (VERSION) {
@@ -21,6 +22,7 @@ namespace Wwise {
 		case BankVersion::V2022:
 			break;
 		default:
+			std::cout << "ERROR: Unsupported Soundbank version! Supported versions: 2013 (88), 2015 (113), 2022 (145)" << std::endl;
 			throw std::runtime_error("Unsupported Soundbank version! Supported versions: 2013 (88), 2015 (113), 2022 (145)");
 		}
 
@@ -46,6 +48,7 @@ namespace Wwise {
 		std::cout << "Searching for HIRC header..." << std::endl;
 		size_t hirc_address = reader.SearchAddress(Header::HIRC);
 		if (!hirc_address) {
+			std::cout << "ERROR: Soundbank has no readable objects!" << std::endl;
 			throw std::runtime_error("Soundbank has no readable objects!");
 		}
 		reader.Seek(hirc_address);
@@ -75,6 +78,7 @@ namespace Wwise {
 		CONVERT_VERSION = new_version;
 
 		if (CONVERT_VERSION <= VERSION) {
+			std::cout << "ERROR: Conversion version cannot be lower than or equal to the current version!" << std::endl;
 			throw std::runtime_error("Converted bank version cannot be lower than or equal to the current version!");
 		}
 

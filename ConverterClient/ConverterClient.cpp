@@ -16,8 +16,8 @@ int main()
     std::cin >> version;
     bank.Convert((Wwise::BankVersion)version, "output.bnk");
 #else
-    std::filesystem::path path = "D:\\GitHub\\diesel-wwise-bnk-converter\\x64\\Debug\\input_soundbank.bnk";
+    std::filesystem::path path = "D:\\GitHub\\diesel-wwise-bnk-version-converter\\x64\\Debug\\input_soundbank.bnk";
     Wwise::Soundbank bank(path);
-    bank.Convert(Wwise::BankVersion::V2022, "D:\\GitHub\\diesel-wwise-bnk-converter\\x64\\Debug\\output_soundbank.bnk");
+    bank.Convert(Wwise::BankVersion::V2022, "D:\\GitHub\\diesel-wwise-bnk-version-converter\\x64\\Debug\\output_soundbank.bnk");
 #endif
 }

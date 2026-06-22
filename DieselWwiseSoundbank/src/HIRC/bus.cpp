@@ -197,8 +197,15 @@ namespace Wwise {
 			PositioningParams new_positioning{};
 			new_positioning.is_2d_positioning_available = 0;
 			new_positioning.is_3d_positioning_available = 0;
-			BitPositioning2022& bits_positioning = new_positioning.bits_positioning.emplace<BitPositioning2022>();
-			bits_positioning.positioning_info_override_parent = true; // always true, and the only one set
+			if (VERSION == BankVersion::V2013) {
+				BitPositioning2013& bits_positioning = new_positioning.bits_positioning.emplace<BitPositioning2013>();
+				bits_positioning.positioning_info_override_parent = true; // always true, and the only one set
+			}
+			else { // 2015 -> 2022
+				BitPositioning2015& bits_positioning = new_positioning.bits_positioning.emplace<BitPositioning2015>();
+				bits_positioning.positioning_info_override_parent = true; // always true, and the only one set
+			}
+			
 			new_positioning.Convert(writer);
 
 			AuxParams new_aux{};

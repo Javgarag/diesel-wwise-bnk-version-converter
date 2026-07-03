@@ -190,13 +190,18 @@ namespace Wwise {
 	void SourceData::Convert(Writer& writer) {
 		plugin.Convert(writer);
 
-		// + 2013
-		if (VERSION == BankVersion::V2013) {
-			writer << ConvertType(std::get<SourceTypeOld>(source_type));
-		}
-		else {
+		// Force-convert zero latency sounds to normal streaming (old IMA ADPCM prefetch segments don't play correctly on modern Wwise)
+		switch (VERSION) {
+		case BankVersion::V2013:
+			if (std::get<SourceTypeOld>(source_type) == SourceTypeOld::PrefetchStreaming) {
+				writer << SourceTypeNew::Streaming;
+			}
+			else {
+				writer << ConvertType(std::get<SourceTypeOld>(source_type));
+			}
+			break;
+		case BankVersion::V2015:
 			if (std::get<SourceTypeNew>(source_type) == SourceTypeNew::PrefetchStreaming) {
-				// Force-convert zero latency sounds to normal streaming (old IMA ADPCM prefetch segments don't play correctly on modern Wwise)
 				writer << SourceTypeNew::Streaming;
 			}
 			else {

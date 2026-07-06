@@ -4,9 +4,9 @@
 // todo: add optionals to auxparams, advsettingsaparams, statechunk, initial_rtpc
 
 namespace Wwise {
-	Soundbank::Soundbank(const std::filesystem::path& file_path)
+	Soundbank::Soundbank(std::istream& bnk_stream)
 	{
-		reader = Reader(file_path);
+		Reader reader(bnk_stream);
 
 		// BKHD		
 		//std::cout << "Reading: BKHD (soundbank header)" << std::endl;
@@ -23,63 +23,50 @@ namespace Wwise {
 		case BankVersion::V2022:
 			break;
 		default:
-			std::cerr << "ERROR: Unsupported Soundbank version! Supported versions: 2013 (88), 2015 (113), 2022 (145)" << std::endl;
+			std::cerr << "ERROR: Unsupported Soundbank version! Supported versions: 2013 (-v 88), 2015 (-v 113), 2022 (-v 145)" << std::endl;
 			std::exit(EXIT_FAILURE);
 		}
 
-		// STMG (init.bnk)
-		//std::cout << "Reading: STMG (global settings)" << std::endl;
-		if (long stmg_address = reader.SearchAddress(Header::STMG, reader.Tell(), Header::DIDX)) {
-			reader.Seek(stmg_address);
-			global_settings = STMG(reader);
+		int next_header;
+		while (reader.HasDataLeft()) {
+			reader.Read(&next_header);
+
+			switch ((Header)next_header) {
+			case Header::STMG:
+				reader.Seek(reader.Tell() - sizeof(int));
+				global_settings = STMG(reader);
+				break;
+			case Header::DIDX:
+				reader.Seek(reader.Tell() - sizeof(int));
+				data_index = DIDX(reader);
+				break;
+			case Header::DATA:
+				reader.Seek(reader.Tell() - sizeof(int));
+				sound_data = DATA(reader);
+				break;
+			case Header::HIRC:
+				reader.Seek(reader.Tell() - sizeof(int));
+				objects = HIRC(reader);
+				break;
+			case Header::ENVS:
+				reader.Seek(reader.Tell() - sizeof(int));
+				enviroment_settings = ENVS(reader);
+				break;
+			case Header::STID:
+				reader.Seek(reader.Tell() - sizeof(int));
+				string_mapping = STID(reader);
+				break;
+			}
 		}
 
-		// DIDX
-		//std::cout << "Reading: DIDX (data index)" << std::endl;
-		if (long didx_address = reader.SearchAddress(Header::DIDX, reader.Tell(), Header::DATA)) {
-			reader.Seek(didx_address);
-			data_index = DIDX(reader);
-		}
-
-		// DATA
-		//std::cout << "Reading: DATA (embedded sounds)" << std::endl;
-		if (long data_address = reader.SearchAddress(Header::DATA, reader.Tell(), Header::HIRC)) {
-			reader.Seek(data_address);
-			sound_data = DATA(reader);
-		}
-
-		// HIRC
-		//std::cout << "Searching for HIRC header..." << std::endl;
-		long hirc_address = reader.SearchAddress(Header::HIRC, reader.Tell());
-		if (!hirc_address) {
-			std::cerr << "ERROR: Soundbank has no readable objects!" << std::endl;
-			std::exit(EXIT_FAILURE);
-		}
-		reader.Seek(hirc_address);
-		objects = HIRC(reader);
-
-		// ENVS
-		//std::cout << "Searching for ENVS header..." << std::endl;
-		if (long envs_address = reader.SearchAddress(Header::ENVS, reader.Tell(), Header::STID)) {
-			reader.Seek(envs_address);
-			enviroment_settings = ENVS(reader);
-		}
-
-		// STID
-		//std::cout << "Searching for STID header..." << std::endl;
-		if (long stid_address = reader.SearchAddress(Header::STID, reader.Tell())) {
-			reader.Seek(stid_address);
-			string_mapping = STID(reader);
-		}
-
-		reader.CloseFile();
 		std::cout << "Successful parsing of version " << (int)VERSION << std::endl;
 	};
 
-	bool Soundbank::Convert(BankVersion new_version, const std::filesystem::path& file_path) {
+	bool Soundbank::Convert(BankVersion new_version, std::ostream& bnk_stream) 
+	{
 		CONVERT_VERSION = new_version;
 		if (CONVERT_VERSION != BankVersion::V2013 && CONVERT_VERSION != BankVersion::V2015 && CONVERT_VERSION != BankVersion::V2022) {
-			std::cerr << "ERROR: Unsupported converted version; supported versions: 2013 (88), 2015 (113), 2022 (145)" << std::endl;
+			std::cerr << "ERROR: Unsupported converted version; supported versions: 2013 (-v 88), 2015 (-v 113), 2022 (-v 145)" << std::endl;
 			std::exit(EXIT_FAILURE);
 		}
 
@@ -88,7 +75,12 @@ namespace Wwise {
 			std::exit(EXIT_FAILURE);
 		}
 
-		writer = Writer(file_path);
+		if (objects.num_items == 0) {
+			std::cerr << "ERROR: Soundbank contains no items! Impossible to \"convert\"" << std::endl;
+			std::exit(EXIT_FAILURE);
+		}
+
+		Writer writer(bnk_stream);
 
 		bank_header.Convert(writer);
 
@@ -113,8 +105,6 @@ namespace Wwise {
 		if (string_mapping) {
 			string_mapping.value().Convert(writer);
 		}
-
-		writer.CloseFile();
 
 		std::cout << "Successful conversion to version " << (int)new_version << std::endl;
 		return true;

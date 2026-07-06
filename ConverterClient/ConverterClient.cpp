@@ -1,5 +1,4 @@
-#include <iostream>
-#include <filesystem>
+#include <fstream>
 #include "soundbank.h"
 #include "ak_types.h"
 
@@ -22,14 +21,21 @@ std::string find_option_argument(int argc, char* argv[], std::string option) {
 }
 
 int main(int argc, char* argv[]) {
-#ifdef NDEBUG
     if (argc < 2) {
         std::cerr << "Usage: <.bnk input file> [-o output_file] [-v end_version]" << std::endl;
         std::exit(EXIT_FAILURE);
     }
 
     std::filesystem::path path = argv[1];
-    Wwise::Soundbank bank(path);
+    std::filebuf in_buff;
+    std::istream bnk_in(&in_buff);
+
+    if (!in_buff.open(path, std::ios::in | std::ios::binary)) {
+        std::cerr << "ERROR: Failed to open file" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    Wwise::Soundbank bank(bnk_in);
+    in_buff.close();
 
     int version;
     if (find_option_argument(argc, argv, "-v") != "") {
@@ -49,10 +55,14 @@ int main(int argc, char* argv[]) {
         std::cin >> output_path;
     }
 
-    bank.Convert((Wwise::BankVersion)version, output_path);
-#else
-    std::filesystem::path path = "D:\\GitHub\\diesel-wwise-bnk-version-converter\\x64\\Debug\\input_soundbank.bnk";
-    Wwise::Soundbank bank(path);
-    bank.Convert(Wwise::BankVersion::V2022, "D:\\GitHub\\diesel-wwise-bnk-version-converter\\x64\\Debug\\output_soundbank.bnk");
-#endif
+    std::filebuf out_buff;
+    std::ostream bnk_out(&out_buff);
+
+    if (!out_buff.open(output_path, std::ios::out | std::ios::binary)) {
+        std::cerr << "ERROR: Failed to write new file" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+    bank.Convert((Wwise::BankVersion)version, bnk_out);
+    bnk_out.flush();
+    out_buff.close();
 }

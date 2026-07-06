@@ -1,14 +1,9 @@
 #include "writer.h"
-#include <filesystem>
 
 namespace Wwise {
-	Writer::Writer(const std::filesystem::path& file_path) 
-		: stream(file_path, std::ios::out | std::ios::binary)
-	{
-		if (!stream.is_open()) {
-			throw std::runtime_error("Failed to open file");
-		}
-	}
+	Writer::Writer(std::ostream& bnk_stream)
+		: stream(bnk_stream)
+	{}
 
 	long Writer::Tell() {
 		return stream.tellp();
@@ -26,9 +21,4 @@ namespace Wwise {
 	void Writer::Seek(long address) {
 		stream.seekp(address);
 	};
-
-	void Writer::CloseFile() {
-		stream.flush();
-		stream.close();
-	}
 }

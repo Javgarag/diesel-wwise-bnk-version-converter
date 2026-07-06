@@ -1,6 +1,7 @@
 #pragma once
 #include "../DieselWwiseSoundbank.h"
 #include "globals.h"
+#include "ak_types.h"
 
 #include "bkhd.h"
 #include "didx.h"
@@ -29,11 +30,8 @@ namespace Wwise {
 		HIRC objects;
 		std::optional<ENVS> enviroment_settings;
 		std::optional<STID> string_mapping;
-
-		bool Convert(BankVersion new_version, const std::filesystem::path& file_path);
-		Soundbank(const std::filesystem::path& file_path);
-	private:
-		Reader reader;
-		Writer writer;
+		
+		Soundbank(std::istream& bnk_stream);
+		bool Convert(BankVersion new_version, std::ostream& bnk_stream);
 	};
 }

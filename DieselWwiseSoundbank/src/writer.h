@@ -1,6 +1,5 @@
 #pragma once
-#include <fstream>
-#include <filesystem>
+#include <iostream>
 #include <stack>
 
 namespace Wwise {
@@ -19,15 +18,13 @@ namespace Wwise {
 			return *this;
 		}
 
-		void CloseFile();
+		Writer(std::ostream& bnk_stream);
 		long Tell();
 		void PushCurrentPos();
 		void PopLastPos();
 		void Seek(long address);
-		Writer() = default;
-		Writer(const std::filesystem::path& file_path);
 	private:
-		std::ofstream stream;
+		std::ostream& stream;
 		std::stack<long> savedPositions;
 	};
 }

@@ -6,13 +6,13 @@
 #include <stack>
 
 namespace Wwise {
-	Reader::Reader(const std::filesystem::path& file_path)
-		: stream(file_path, std::ios::in | std::ios::binary)
+	Reader::Reader(std::istream& istream)
+		: stream(istream)
 	{
-		if (!stream.is_open()) {
-			std::cerr << "ERROR: Failed to open file" << std::endl;
-			std::exit(EXIT_FAILURE);
-		}
+		PushCurrentPos();
+		stream.seekg(0, std::ios::end);
+		this->size = stream.tellg();
+		PopLastPos();
 	};
 
 	size_t Reader::Tell() {
@@ -32,10 +32,6 @@ namespace Wwise {
 		stream.seekg(address);
 	};
 
-	void Reader::CloseFile() {
-		stream.close();
-	}
-
 	std::string Reader::ReadNullTerminatedString() {
 		std::string result;
 		char c;
@@ -46,5 +42,16 @@ namespace Wwise {
 		}
 
 		return result;
+	}
+
+	bool Reader::HasDataLeft() {
+		size_t pos = stream.tellg();
+
+		if (pos > (size - sizeof(Header))) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 };

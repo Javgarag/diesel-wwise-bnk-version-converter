@@ -30,9 +30,6 @@
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DieselWwiseSoundbank.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="src\HIRC\action.h">
       <Filter>Archivos de encabezado\src\HIRC</Filter>
     </ClInclude>

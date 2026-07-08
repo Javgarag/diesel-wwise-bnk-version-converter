@@ -1,5 +1,4 @@
 #pragma once
-#include "../DieselWwiseSoundbank.h"
 #include "globals.h"
 #include "ak_types.h"
 
@@ -21,7 +20,7 @@
 #include <optional>
 
 namespace Wwise {
-	class DIESELWWISESOUNDBANK_API Soundbank {
+	class Soundbank {
 	public:
 		BKHD bank_header;
 		std::optional<DIDX> data_index;

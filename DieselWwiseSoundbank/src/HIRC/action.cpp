@@ -70,7 +70,7 @@ namespace Wwise {
 			}
 
 			exceptions.emplace();
-			for (int i = 0; i < exception_list_size; i++) {
+			for (unsigned int i = 0; i < exception_list_size; i++) {
 				exceptions.value().push_back(ActionException(reader));
 			}
 		}, exception_list_size);
@@ -89,7 +89,7 @@ namespace Wwise {
 				return;
 			}
 
-			for (int i = 0; i < exception_list_size; i++) {
+			for (unsigned int i = 0; i < exception_list_size; i++) {
 				exceptions.value()[i].Convert(writer);
 			}
 		}, exception_list_size);

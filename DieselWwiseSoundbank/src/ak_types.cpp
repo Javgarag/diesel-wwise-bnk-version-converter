@@ -27,6 +27,8 @@ namespace Wwise {
         case HIRCItemTypeOld::Envelope:                 return HIRCItemTypeNew::Envelope;
         case HIRCItemTypeOld::AudioDevice:              return HIRCItemTypeNew::AudioDevice;
         }
+
+        return HIRCItemTypeNew::Invalid;
     }
 
     RTPCType2022 ConvertType(RTPCType2015 t) {
@@ -38,6 +40,8 @@ namespace Wwise {
         case RTPCType2015::Modulator:
             return RTPCType2022::Modulator;
         }
+
+        return RTPCType2022::Invalid;
     }
 
     RTPCAccum2022 ConvertType(RTPCAccum2015 t) {
@@ -49,6 +53,8 @@ namespace Wwise {
         case RTPCAccum2015::Exclusive:
             return RTPCAccum2022::Exclusive;
         }
+
+        return RTPCAccum2022::Invalid;
     }
 
     SourceTypeNew ConvertType(SourceTypeOld t) {
@@ -60,6 +66,8 @@ namespace Wwise {
         case SourceTypeOld::PrefetchStreaming:
             return SourceTypeNew::PrefetchStreaming;
         }
+
+        return SourceTypeNew::Invalid;
     }
 
     AkPropID_2015 ConvertType(AkPropID_2013 t) {
@@ -111,6 +119,8 @@ namespace Wwise {
         case AkPropID_2013::CrossfadeUpCurve:        return AkPropID_2015::CrossfadeUpCurve;
         case AkPropID_2013::CrossfadeDownCurve:      return AkPropID_2015::CrossfadeDownCurve;
         }
+
+        return AkPropID_2015::Invalid;
     }
 
     AkPropID_2022 ConvertType_2013_to_2022(AkPropID_2013 t) {
@@ -162,6 +172,8 @@ namespace Wwise {
         case AkPropID_2013::CrossfadeUpCurve:        return AkPropID_2022::CrossfadeUpCurve;
         case AkPropID_2013::CrossfadeDownCurve:      return AkPropID_2022::CrossfadeDownCurve;
         }
+
+        return AkPropID_2022::Invalid;
     }
 
     AkPropID_2022 ConvertType(AkPropID_2015 t) {
@@ -228,6 +240,8 @@ namespace Wwise {
         case AkPropID_2015::Loop:                    return AkPropID_2022::Loop;
         case AkPropID_2015::InitialDelay:            return AkPropID_2022::InitialDelay;
         }
+
+        return AkPropID_2022::Invalid;
     }
 
     RTPCParameterID_2015 ConvertType(RTPCParameterID_2013 t)
@@ -282,6 +296,8 @@ namespace Wwise {
         case RTPCParameterID_2013::Position_PAN_X_3D:                  return RTPCParameterID_2015::Position_PAN_X_3D;
         case RTPCParameterID_2013::Position_PAN_Y_3D:                  return RTPCParameterID_2015::Position_PAN_Y_3D;
         }
+
+        return RTPCParameterID_2015::Invalid;
     }
 
     RTPCParameterID_2022 ConvertType_2013_to_2022(RTPCParameterID_2013 t)
@@ -333,6 +349,8 @@ namespace Wwise {
         case RTPCParameterID_2013::HDRActiveRange:                     return RTPCParameterID_2022::HDRActiveRange;
         case RTPCParameterID_2013::MakeUpGain:                         return RTPCParameterID_2022::MakeUpGain;
         }
+
+        return RTPCParameterID_2022::Invalid;
     }
 
     RTPCParameterID_2022 ConvertType(RTPCParameterID_2015 t)
@@ -388,5 +406,7 @@ namespace Wwise {
 
         case RTPCParameterID_2015::MuteRatio:                          return RTPCParameterID_2022::MuteRatio;
         }
+
+        return RTPCParameterID_2022::Invalid;
     }
 }

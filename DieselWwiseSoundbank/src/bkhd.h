@@ -12,7 +12,7 @@ namespace Wwise {
 		Header header;
 		uint32_t size;
 
-		long size_position = -1;
+		long long size_position = -1;
 
 		Section() = default;
 		Section(Reader& reader);

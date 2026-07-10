@@ -13,7 +13,7 @@ namespace Wwise {
 		uint8_t type;
 
 		uint32_t size = -1;
-		long size_position = -1;
+		long long size_position = -1;
 
 		size_t data_start;
 		uint32_t item_id;

@@ -48,11 +48,11 @@ namespace Wwise {
 	}
 
 	void Section::UpdateSize(Writer& writer) {
-		uint32_t final_size = writer.Tell() - (size_position + sizeof(uint32_t));
+		size_t final_size = writer.Tell() - (size_position + sizeof(uint32_t));
 
 		writer.PushCurrentPos();
 		writer.Seek(size_position);
-		writer << final_size;
+		writer << (uint32_t)final_size;
 		writer.PopLastPos();
 	}
 }

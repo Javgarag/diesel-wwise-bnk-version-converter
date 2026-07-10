@@ -67,7 +67,8 @@ namespace Wwise {
         Envelope,
         AudioDevice,
         TimeMod,
-        SidechainMix
+        SidechainMix,
+        Invalid = 0xFF
     };
 
     enum class ActionType : uint16_t {
@@ -214,7 +215,8 @@ namespace Wwise {
         MIDIParameter,
         Switch,
         State,
-        Modulator
+        Modulator,
+        Invalid = 0xFF
     };
 
     enum class RTPCAccum2015 : uint8_t {
@@ -230,7 +232,8 @@ namespace Wwise {
         Multiply,
         Boolean,
         Maximum,
-        Filter
+        Filter,
+        Invalid = 0xFF
     };
 
     // Positioning Params
@@ -444,7 +447,8 @@ namespace Wwise {
     enum class SourceTypeNew : uint8_t {
         Bank,
         PrefetchStreaming,
-        Streaming
+        Streaming,
+        Invalid = 0xFF
     };
 
     // Property IDs
@@ -558,7 +562,8 @@ namespace Wwise {
         MidiTargetNode,
         AttachedPluginFXID,
         Loop,
-        InitialDelay
+        InitialDelay,
+        Invalid = 0xFF
     };
 
     enum class AkPropID_2022 : uint8_t {
@@ -635,7 +640,8 @@ namespace Wwise {
         AttenuationID,
         PositioningTypeBlend,
         ReflectionBusVolume,
-        PAN_UD
+        PAN_UD,
+        Invalid = 0xFF
     };
 
     enum class RTPCParameterID_2013 : uint8_t
@@ -758,7 +764,9 @@ namespace Wwise {
         OutputBusHPF,
         OutputBusLPF,
 
-        MuteRatio = 0x3F
+        MuteRatio = 0x3F,
+
+        Invalid = 0xFF
     };
 
     enum class RTPCParameterID_2022 : uint8_t
@@ -838,7 +846,9 @@ namespace Wwise {
 
         Unknown_Custom_3D = 0x3D,
         Unknown_Custom_3E,
-        Unknown_Custom_3F
+        Unknown_Custom_3F,
+        
+        Invalid = 0xFF
     };
 
     // Type converters

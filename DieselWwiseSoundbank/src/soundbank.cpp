@@ -6,14 +6,24 @@
 namespace Wwise {
 	Soundbank::Soundbank(std::istream& bnk_stream)
 	{
-		Reader reader(bnk_stream);
+		FileReader reader(bnk_stream);
+		this->Parse(reader);
+	};
 
+	Soundbank::Soundbank(uint8_t* data, size_t size)
+	{
+		MemoryReader reader(data, size);
+		this->Parse(reader);
+	}
+
+	void Soundbank::Parse(Reader& reader) 
+	{
 		// BKHD		
 		//std::cout << "Reading: BKHD (soundbank header)" << std::endl;
 		bank_header = BKHD(reader);
 		if (bank_header.section_info.header != Header::BKHD) {
 			std::cerr << "[WwiseConverter] ERROR: File is not a Wwise Soundbank (.bnk)!" << std::endl;
-			std::exit(EXIT_FAILURE);
+			throw std::runtime_error("Attempted to convert a file that is not a soundbank with this converter");
 		}
 		switch (VERSION) {
 		case BankVersion::V2013:
@@ -24,7 +34,7 @@ namespace Wwise {
 			break;
 		default:
 			std::cerr << "[WwiseConverter] ERROR: Unsupported Soundbank version! Supported versions: 2013 (88), 2015 (113), 2022 (145)" << std::endl;
-			std::exit(EXIT_FAILURE);
+			throw std::runtime_error("Attempted to convert soundbank to an invalid version");
 		}
 
 		int next_header;
@@ -60,27 +70,37 @@ namespace Wwise {
 		}
 
 		//std::cout << "Successful parsing of version " << (int)VERSION << std::endl;
-	};
+	}
 
-	bool Soundbank::Convert(BankVersion new_version, std::ostream& bnk_stream) 
+	void Soundbank::Convert(BankVersion new_version, std::ostream& bnk_stream) 
 	{
 		CONVERT_VERSION = new_version;
+		FileWriter writer(bnk_stream);
+		this->_Convert(writer);
+	}
+
+	void Soundbank::Convert(BankVersion new_version, std::vector<uint8_t>& out)
+	{
+		CONVERT_VERSION = new_version;
+		MemoryWriter writer(out);
+		this->_Convert(writer);
+	}
+
+	void Soundbank::_Convert(Writer& writer) {
 		if (CONVERT_VERSION != BankVersion::V2013 && CONVERT_VERSION != BankVersion::V2015 && CONVERT_VERSION != BankVersion::V2022) {
 			std::cerr << "[WwiseConverter] ERROR: Unsupported converted version; supported versions: 2013 (88), 2015 (113), 2022 (145)" << std::endl;
-			std::exit(EXIT_FAILURE);
+			throw std::runtime_error("Attempted to convert soundbank to an invalid version");
 		}
 
 		if (CONVERT_VERSION <= VERSION) {
 			std::cerr << "[WwiseConverter] ERROR: Conversion version cannot be lower than or equal to the current version!" << std::endl;
-			std::exit(EXIT_FAILURE);
+			throw std::runtime_error("Attempted to convert soundbank to an invalid version");
 		}
 
 		if (objects.num_items == 0) {
 			std::cerr << "[WwiseConverter] ERROR: Soundbank contains no items! Impossible to \"convert\"" << std::endl;
-			std::exit(EXIT_FAILURE);
+			throw std::runtime_error("Attempted to convert soundbank with no items");
 		}
-
-		Writer writer(bnk_stream);
 
 		bank_header.Convert(writer);
 
@@ -106,7 +126,6 @@ namespace Wwise {
 			string_mapping.value().Convert(writer);
 		}
 
-		std::cout << "[WwiseConverter] INFO: successfully migrated bank to version " << (int)new_version << std::endl;
-		return true;
+		std::cout << "[WwiseConverter] INFO: successfully migrated bank to version " << (int)CONVERT_VERSION << std::endl;
 	}
 } 

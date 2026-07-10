@@ -26,7 +26,7 @@ namespace Wwise {
 		Section section_info;
 
 		uint32_t num_items;
-		long num_items_pos = -1;
+		long long num_items_pos = -1;
 
 		std::vector<std::variant<
 			HIRCUnknown, 

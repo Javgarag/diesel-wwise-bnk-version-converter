@@ -31,6 +31,12 @@ namespace Wwise {
 		std::optional<STID> string_mapping;
 		
 		Soundbank(std::istream& bnk_stream);
-		bool Convert(BankVersion new_version, std::ostream& bnk_stream);
+		Soundbank(uint8_t* data, size_t size);
+
+		void Parse(Reader& reader);
+		void Convert(BankVersion new_version, std::ostream& bnk_stream);
+		void Convert(BankVersion new_version, std::vector<uint8_t>& out);
+	private:
+		void _Convert(Writer& writer);
 	};
 }

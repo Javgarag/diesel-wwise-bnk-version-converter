@@ -644,21 +644,15 @@ namespace Wwise {
 		// EXCLUSIVELY 3D parameters
 		if ((VERSION == BankVersion::V2013 && is_3d_positioning_available == 1) 
 			|| (VERSION == BankVersion::V2015 && std::get<BitPositioning2015>(bits_positioning).is_3d_positioning_available == 1)) {
-			// if VERSION == 2013, spatialization_mode == None (0) no matter convert version.
-			if (VERSION == BankVersion::V2015 && CONVERT_VERSION == BankVersion::V2022) {
+			if (VERSION == BankVersion::V2013) { 
+				bits_3d_new |= ((int)SpatializationMode::PositionAndOrientation << 0); // always the case if 3D on 2013
+			}
+			else { // 2015 to 2022
 				bits_3d_new |= ((int)std::get<Bits3D2015>(bits_3d.value()).spatialization_mode << 0);
 			}
 
-			// hold emitter pos and orientation
-			if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2015 && type.value() == PositioningType::Positioning2D) { // has emitter automation
-				bits_3d_new |= (is_dynamic.value() << 3);
-			}
-			else if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2022 && type.value() == PositioningType::Positioning2D) { // has emitter automation
-				bits_3d_new |= (is_dynamic.value() << 4);
-			}
-			else if (VERSION != BankVersion::V2013) { // 2015 to 2022
-				bits_3d_new |= ((int)std::get<Bits3D2015>(bits_3d.value()).hold_emitter_pos_and_orient << 4);
-			}
+			// hold emitter pos and orientation will always be 0 when converting from 2013/2015 (introduced Wwise 2018.1)
+			// https://www.audiokinetic.com/fr/community/blog/out-with-the-old-in-with-the-new-positioning-revamped-in-wwise-2018.1/
 
 			// hold listener orient
 			if (VERSION == BankVersion::V2013 && CONVERT_VERSION == BankVersion::V2015 && type.value() != PositioningType::Positioning2D) { // has listener automation

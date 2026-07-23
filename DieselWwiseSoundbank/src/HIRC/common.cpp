@@ -959,7 +959,6 @@ namespace Wwise {
 	}
 
 	void BaseParams::Convert(Writer& writer) {
-
 		// before we start check for additional properties added to PropertyBundle
 		if (positioning_params.attenuation_id.has_value() && CONVERT_VERSION == BankVersion::V2022) {
 			parameter_node_initial_params.property_bundle.AddNewProperty((int)AkPropID_2022::AttenuationID, *reinterpret_cast<float*>(&positioning_params.attenuation_id.value()));

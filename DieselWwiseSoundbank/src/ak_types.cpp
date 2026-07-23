@@ -173,6 +173,10 @@ namespace Wwise {
         case AkPropID_2013::CrossfadeDownCurve:      return AkPropID_2022::CrossfadeDownCurve;
         }
 
+        if ((int)t == 70) {
+            return AkPropID_2022::AttenuationID;
+        }
+
         return AkPropID_2022::Invalid;
     }
 
@@ -239,6 +243,10 @@ namespace Wwise {
         case AkPropID_2015::AttachedPluginFXID:      return AkPropID_2022::AttachedPluginFXID;
         case AkPropID_2015::Loop:                    return AkPropID_2022::Loop;
         case AkPropID_2015::InitialDelay:            return AkPropID_2022::InitialDelay;
+        }
+
+        if ((int)t == 70) {
+            return AkPropID_2022::AttenuationID;
         }
 
         return AkPropID_2022::Invalid;
